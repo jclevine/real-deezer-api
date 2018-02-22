@@ -1,0 +1,71 @@
+import { Deezer} from '../src/Deezer'
+import { expect } from 'chai'
+import sinon from 'sinon'
+import { assert } from 'sinon'
+import request from 'request-promise'
+
+describe('Tracks', () => {
+
+  afterEach(() => {
+    request.get.restore()
+  })
+
+  it('gets all the tracks for a single playlist id', async () => {
+    const getStub = sinon.stub(request, 'get').resolves({
+      data: [ { id: 100, title: 'Discovery' }, { id: 200, title: 'Wow!'} ]
+    })
+
+    const dz = new Deezer('fake-api-key')
+    const actual = await dz.getAllTrackIds(5)
+
+    assert.calledWith(getStub, 
+      'http://api.deezer.com/playlist/5/tracks', 
+      {
+        qs: {
+          access_token: 'fake-api-key',
+          expires: 0
+        }
+      }
+    )
+
+    expect(actual).to.deep.equal([100, 200])
+  })
+
+  it('gets all the tracks for two playlist ids', async () => {
+    const getStub = sinon.stub(request, 'get')    
+    getStub.withArgs(
+      'http://api.deezer.com/playlist/5/tracks', 
+      {
+        qs: {
+          access_token: 'fake-api-key',
+          expires: 0
+        }
+      }
+    ).resolves({
+      data: [ 
+        { id: 100, title: 'Discovery' }, { id: 200, title: 'Wow!'}
+      ]
+    })
+    getStub.withArgs(
+      'http://api.deezer.com/playlist/10/tracks', 
+      {
+        qs: {
+          access_token: 'fake-api-key',
+          expires: 0
+        }
+      }
+    ).resolves({
+      data: [ 
+        { id: 300, title: 'In It' }, { id: 400, title: 'Desolation Row'} 
+      ]
+    })
+
+    const dz = new Deezer('fake-api-key')
+    const actual = await dz.getAllTrackIds(5, 10)
+
+    assert.calledWith(getStub, 'http://api.deezer.com/playlist/5/tracks')
+    assert.calledWith(getStub, 'http://api.deezer.com/playlist/10/tracks')
+
+    expect(actual).to.deep.equal([100, 200, 300, 400])
+  })
+})
