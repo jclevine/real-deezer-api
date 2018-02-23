@@ -4,14 +4,17 @@ import sinon from 'sinon'
 import { assert } from 'sinon'
 import request from 'request-promise'
 
+
+const sandbox = sinon.createSandbox()
+
 describe('Tracks', () => {
 
-  afterEach(() => {
-    request.get.restore()
+  afterEach(function () {
+    sandbox.restore()
   })
 
   it('gets all the tracks for a single playlist id', async () => {
-    const getStub = sinon.stub(request, 'get').resolves({
+    const getStub = sandbox.stub(request, 'get').resolves({
       data: [ { id: 100, title: 'Discovery' }, { id: 200, title: 'Wow!'} ]
     })
 
@@ -32,7 +35,7 @@ describe('Tracks', () => {
   })
 
   it('gets all the tracks for two playlist ids', async () => {
-    const getStub = sinon.stub(request, 'get')    
+    const getStub = sandbox.stub(request, 'get')    
     getStub.withArgs(
       'http://api.deezer.com/playlist/5/tracks', 
       {

@@ -6,14 +6,16 @@ import requestPromise from 'request-promise'
 import readFilePromise from 'fs-readfile-promise'
 
 
+const sandbox = sinon.createSandbox()
+
 describe('Playlists', () => {
 
-  afterEach(() => {
-    requestPromise.get.restore()
+  afterEach(function () {
+      sandbox.restore()
   })
 
   it('gets all the playlist ids', async () => {
-    const getStub = sinon.stub(requestPromise, 'get').resolves({
+    const getStub = sandbox.stub(requestPromise, 'get').resolves({
       data: [ { id: 1, name: 'Something' }, { id: 2, name: 'Something2' }, { id: 3, name: 'Something3' } ]
     })
 
@@ -34,7 +36,7 @@ describe('Playlists', () => {
   })
 
   it('gets all the playlist ids with names containing one substring', async () => {
-    const getStub = sinon.stub(requestPromise, 'get').resolves({
+    const getStub = sandbox.stub(requestPromise, 'get').resolves({
       data: [ 
         { id: 1, name: 'Super Playlist!' }, 
         { id: 2, name: 'Bad Playlist!' }, 
@@ -50,7 +52,7 @@ describe('Playlists', () => {
   })
 
   it('gets all the playlist ids with names containing two possible substrings', async () => {
-    const getStub = sinon.stub(requestPromise, 'get').resolves({
+    const getStub = sandbox.stub(requestPromise, 'get').resolves({
       data: [ 
         { id: 1, name: 'Super Playlist!' }, 
         { id: 2, name: 'Bad Playlist!' }, 
@@ -66,17 +68,17 @@ describe('Playlists', () => {
   })
 
   it('creates 2 playlists from 3 tracks with a max playlist size of 2', async () => {    
-    const readFileStub = sinon.stub().resolves('1000\n2000\n3000')
+    const readFileStub = sandbox.stub().resolves('1000\n2000\n3000')
 
    
     // Creation of first playlist that will get 2 of the tracks
-    const postStub = sinon.stub(requestPromise, 'post').onFirstCall().resolves({id: 10000})
+    const postStub = sandbox.stub(requestPromise, 'post').onFirstCall().resolves({id: 10000})
       
     // Creation of the second playlist that will get 1 track
     postStub.onSecondCall().resolves({id: 20000})
 
     // Return the size of the 1st playlist after the 2 tracks were added
-    const getStub = sinon.stub(requestPromise, 'get').withArgs(
+    const getStub = sandbox.stub(requestPromise, 'get').withArgs(
       'https://api.deezer.com/playlist/10000', {
         qs: {
           access_token: 'fake-api-key',
