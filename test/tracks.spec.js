@@ -14,9 +14,9 @@ describe('Tracks', () => {
   })
 
   it('gets all the tracks for a single playlist id', async () => {
-    const getStub = sandbox.stub(request, 'get').resolves({
+    const getStub = sandbox.stub(request, 'get').resolves(JSON.stringify({
       data: [ { id: 100, title: 'Discovery' }, { id: 200, title: 'Wow!'} ]
-    })
+    }))
 
     const dz = new Deezer('fake-api-key')
     const actual = await dz.getAllTrackIds(5)
@@ -44,11 +44,11 @@ describe('Tracks', () => {
           expires: 0
         }
       }
-    ).resolves({
+    ).resolves(JSON.stringify({
       data: [ 
         { id: 100, title: 'Discovery' }, { id: 200, title: 'Wow!'}
       ]
-    })
+    }))
     getStub.withArgs(
       'http://api.deezer.com/playlist/10/tracks', 
       {
@@ -57,11 +57,11 @@ describe('Tracks', () => {
           expires: 0
         }
       }
-    ).resolves({
+    ).resolves(JSON.stringify({
       data: [ 
         { id: 300, title: 'In It' }, { id: 400, title: 'Desolation Row'} 
       ]
-    })
+    }))
 
     const dz = new Deezer('fake-api-key')
     const actual = await dz.getAllTrackIds(5, 10)
@@ -80,7 +80,7 @@ describe('Tracks', () => {
         cover: 'https://deezer.com/album/2/image'
       }
     }
-    const getStub = sandbox.stub(request, 'get').resolves(expected)
+    const getStub = sandbox.stub(request, 'get').resolves(JSON.stringify(expected))
     
     const dz = new Deezer('fake-api-key')
     const actual = await dz.getTrack(1)

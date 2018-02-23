@@ -35,12 +35,12 @@ export class Deezer {
 
   getPlaylistTracks(playlistIds) {
     return playlistIds.map(async playlistId => {
-      return await requestPromise.get(`${urls.apiBase}/playlist/${playlistId}/tracks`, {
+      return JSON.parse(await requestPromise.get(`${urls.apiBase}/playlist/${playlistId}/tracks`, {
         qs: {
           access_token: this.apiKey,
           expires: 0
         }
-      })
+      }))
     })
   }
 
@@ -87,6 +87,6 @@ export class Deezer {
   }  
 
   async getTrack(id) {
-    return await requestPromise.get(`${urls.apiBase}/track/${id}`)
+    return JSON.parse(await requestPromise.get(`${urls.apiBase}/track/${id}`))
   }
 }
