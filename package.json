@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/jclevine/real-deezer-api#readme",
   "dependencies": {
+    "fs-readfile-promise": "^3.0.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"
   },

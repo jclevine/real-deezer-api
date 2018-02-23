@@ -1,5 +1,6 @@
 import request from 'request-promise'
 import urls from './urls'
+import readFilePromise from 'fs-readfile-promise'
 
 export class Deezer {
   constructor(apiKey) {
@@ -39,5 +40,21 @@ export class Deezer {
         }
       })
     })
+  }
+
+  async createPlaylists({filePath, maxPlaylistSize, maxPlaylistTrackAddPerRequest, overrideFileReader}) {
+    const playlistIds = (await overrideFileReader(filePath)).split('\n')
+    
+    const chunks = Deezer.splitOriginalPlaylistIntoMaxSizeChunks(playlistIds, maxPlaylistSize)
+  }
+
+  static splitOriginalPlaylistIntoMaxSizeChunks(playlist, maxPlaylistSize) {
+    let chunks = []
+    const chunkCount = Math.ceil(playlist.length / maxPlaylistSize)
+    for (let i = 0, j = 0; i < chunkCount; ++i, j += maxPlaylistSize) {
+      chunks[i] = playlist.slice(j, j + maxPlaylistSize)
+    }
+
+    return chunks
   }
 }
