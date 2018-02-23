@@ -16,7 +16,7 @@ describe('Playlists', () => {
 
   it('gets all the playlist ids', async () => {
     const getStub = sandbox.stub(requestPromise, 'get').resolves(JSON.stringify({
-      data: [ { id: 1, name: 'Something' }, { id: 2, name: 'Something2' }, { id: 3, name: 'Something3' } ]
+      data: [ { id: 1, title: 'Something' }, { id: 2, title: 'Something2' }, { id: 3, title: 'Something3' } ]
     }))
 
     const dz = new Deezer('fake-api-key')
@@ -38,10 +38,10 @@ describe('Playlists', () => {
   it('gets all the playlist ids with names containing one substring', async () => {
     const getStub = sandbox.stub(requestPromise, 'get').resolves(JSON.stringify({
       data: [ 
-        { id: 1, name: 'Super Playlist!' }, 
-        { id: 2, name: 'Bad Playlist!' }, 
-        { id: 3, name: 'Ok Playlist!' },
-        { id: 4, name: 'Super Playlist 2!' } 
+        { id: 1, title: 'Super Playlist!' }, 
+        { id: 2, title: 'Bad Playlist!' }, 
+        { id: 3, title: 'Ok Playlist!' },
+        { id: 4, title: 'Super Playlist 2!' } 
       ]
     }))
 
@@ -54,10 +54,10 @@ describe('Playlists', () => {
   it('gets all the playlist ids with names containing two possible substrings', async () => {
     const getStub = sandbox.stub(requestPromise, 'get').resolves(JSON.stringify({
       data: [ 
-        { id: 1, name: 'Super Playlist!' }, 
-        { id: 2, name: 'Bad Playlist!' }, 
-        { id: 3, name: 'Ok Playlist!' },
-        { id: 4, name: 'Super Playlist 2!' } 
+        { id: 1, title: 'Super Playlist!' }, 
+        { id: 2, title: 'Bad Playlist!' }, 
+        { id: 3, title: 'Ok Playlist!' },
+        { id: 4, title: 'Super Playlist 2!' } 
       ]
     }))
 

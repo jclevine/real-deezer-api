@@ -18,7 +18,7 @@ export class Deezer {
     })
 
     return JSON.parse(playlists).data
-      .filter(playlist => filterStrings.length == 0 || Deezer.playlistPassesFilterStrings(filterStrings, playlist.name))              
+      .filter(playlist => filterStrings.length == 0 || Deezer.playlistPassesFilterStrings(filterStrings, playlist.title))              
       .map(playlist => playlist.id)
   }
 
