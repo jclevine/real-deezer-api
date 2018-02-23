@@ -68,27 +68,7 @@ describe('Playlists', () => {
   it('creates 2 playlists from 3 tracks with a max playlist size of 2', async () => {    
     const readFileStub = sinon.stub().resolves('1000\n2000\n3000')
 
-    // // Creation of first playlist that will get 2 of the tracks
-    // const postStub = sinon.stub(requestPromise, 'post').withArgs(
-    //   'http://api.deezer.com/user/me/playlists', {
-    //     qs: {
-    //       title: 'super-fun-0',
-    //       access_token: 'fake-api-key',
-    //       expires: 0
-    //     }
-    //   }).resolves({id: 10000})
-      
-    // // Creation of the second playlist that will get 1 track
-    // postStub.withArgs(
-    //     'http://api.deezer.com/user/me/playlists', {
-    //       qs: {
-    //         title: 'super-fun-1',
-    //         access_token: 'fake-api-key',
-    //         expires: 0
-    //       }
-    //     }).resolves({id: 20000})
-
-
+   
     // Creation of first playlist that will get 2 of the tracks
     const postStub = sinon.stub(requestPromise, 'post').onFirstCall().resolves({id: 10000})
       
@@ -123,7 +103,6 @@ describe('Playlists', () => {
       overrideFileReader: readFileStub
     })
 
-    console.log(postStub.printf('STUB: %C: %*'))
     // Assert that the 2 tracks were added to the 1st playlist
     assert.calledWith(postStub, 
       'http://api.deezer.com/playlist/10000/tracks', {

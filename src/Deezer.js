@@ -57,13 +57,6 @@ export class Deezer {
   }
 
   async initializePlaylist(title) {
-    console.log('init post', `${urls.apiBase}/user/me/playlists`, {
-      qs: {
-        access_token: this.apiKey,
-        expires: 0,
-        title     
-      }
-    })
     const res = await requestPromise.post(`${urls.apiBase}/user/me/playlists`, {
       qs: {
         access_token: this.apiKey,
@@ -84,13 +77,6 @@ export class Deezer {
   }
 
   async addTracksToPlaylist(playlistId, tracks) {
-    console.log('post', `${urls.apiBase}/playlist/${playlistId}/tracks`, {
-      qs: {
-        songs: tracks.join(','),
-        access_token: this.apiKey,
-        expires: 0
-      }
-    })
     await requestPromise.post(`${urls.apiBase}/playlist/${playlistId}/tracks`, {
       qs: {
         songs: tracks.join(','),
