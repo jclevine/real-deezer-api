@@ -17,7 +17,7 @@ export class Deezer {
       }
     })
 
-    return playlists.data
+    return JSON.parse(playlists).data
       .filter(playlist => filterStrings.length == 0 || Deezer.playlistPassesFilterStrings(filterStrings, playlist.name))              
       .map(playlist => playlist.id)
   }
@@ -85,4 +85,8 @@ export class Deezer {
       }
     })
   }  
+
+  async getTrack(id) {
+    return await requestPromise.get(`${urls.apiBase}/track/${id}`)
+  }
 }

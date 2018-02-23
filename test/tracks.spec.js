@@ -71,4 +71,19 @@ describe('Tracks', () => {
 
     expect(actual).to.deep.equal([100, 200, 300, 400])
   })
+
+  it('gets a track by id', async () => {
+    const expected = {
+      id: 1,
+      album: {
+        title: 'I Love You, Honeybear',
+        cover: 'https://deezer.com/album/2/image'
+      }
+    }
+    const getStub = sandbox.stub(request, 'get').resolves(expected)
+    
+    const dz = new Deezer('fake-api-key')
+    const actual = await dz.getTrack(1)
+    expect(actual).to.be.deep.equal(expected)
+  })
 })
