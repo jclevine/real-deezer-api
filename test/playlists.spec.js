@@ -2,18 +2,18 @@ import { Deezer} from '../src/Deezer'
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { assert } from 'sinon'
-import request from 'request-promise'
+import requestPromise from 'request-promise'
 import readFilePromise from 'fs-readfile-promise'
 
 
 describe('Playlists', () => {
 
   afterEach(() => {
-    request.get.restore()
+    requestPromise.get.restore()
   })
 
   it('gets all the playlist ids', async () => {
-    const getStub = sinon.stub(request, 'get').resolves({
+    const getStub = sinon.stub(requestPromise, 'get').resolves({
       data: [ { id: 1, name: 'Something' }, { id: 2, name: 'Something2' }, { id: 3, name: 'Something3' } ]
     })
 
@@ -34,7 +34,7 @@ describe('Playlists', () => {
   })
 
   it('gets all the playlist ids with names containing one substring', async () => {
-    const getStub = sinon.stub(request, 'get').resolves({
+    const getStub = sinon.stub(requestPromise, 'get').resolves({
       data: [ 
         { id: 1, name: 'Super Playlist!' }, 
         { id: 2, name: 'Bad Playlist!' }, 
@@ -50,7 +50,7 @@ describe('Playlists', () => {
   })
 
   it('gets all the playlist ids with names containing two possible substrings', async () => {
-    const getStub = sinon.stub(request, 'get').resolves({
+    const getStub = sinon.stub(requestPromise, 'get').resolves({
       data: [ 
         { id: 1, name: 'Super Playlist!' }, 
         { id: 2, name: 'Bad Playlist!' }, 
@@ -68,35 +68,42 @@ describe('Playlists', () => {
   it('creates 2 playlists from 3 tracks with a max playlist size of 2', async () => {    
     const readFileStub = sinon.stub().resolves('1000\n2000\n3000')
 
+    // // Creation of first playlist that will get 2 of the tracks
+    // const postStub = sinon.stub(requestPromise, 'post').withArgs(
+    //   'http://api.deezer.com/user/me/playlists', {
+    //     qs: {
+    //       title: 'super-fun-0',
+    //       access_token: 'fake-api-key',
+    //       expires: 0
+    //     }
+    //   }).resolves({id: 10000})
+      
+    // // Creation of the second playlist that will get 1 track
+    // postStub.withArgs(
+    //     'http://api.deezer.com/user/me/playlists', {
+    //       qs: {
+    //         title: 'super-fun-1',
+    //         access_token: 'fake-api-key',
+    //         expires: 0
+    //       }
+    //     }).resolves({id: 20000})
+
+
     // Creation of first playlist that will get 2 of the tracks
-    const postStub = sinon.stub(request, 'post').withArgs(
-      'http://api.deezer.com/user/me/playlists', {
-        qs: {
-          title: 'super-fun-0',
-          access_token: 'fake-api-key',
-          expires: 0
-        }
-      }).resolves({id: 10000})
+    const postStub = sinon.stub(requestPromise, 'post').onFirstCall().resolves({id: 10000})
       
     // Creation of the second playlist that will get 1 track
-    postStub.withArgs(
-        'http://api.deezer.com/user/me/playlists', {
-          qs: {
-            title: 'super-fun-1',
-            access_token: 'fake-api-key',
-            expires: 0
-          }
-        }).resolves({id: 20000})
+    postStub.onSecondCall().resolves({id: 20000})
 
     // Return the size of the 1st playlist after the 2 tracks were added
-    const getStub = sinon.stub(request, 'get').withArgs(
+    const getStub = sinon.stub(requestPromise, 'get').withArgs(
       'https://api.deezer.com/playlist/10000', {
         qs: {
           access_token: 'fake-api-key',
           expires: 0
         }
       }).resolves({nb_tracks: 2})
-
+      
     // Return the size of the 2nd playlist after the last 1 track was added
     getStub.withArgs(
       'https://api.deezer.com/playlist/20000', {
@@ -110,11 +117,13 @@ describe('Playlists', () => {
     const dz = new Deezer('fake-api-key')
     await dz.createPlaylists({
       filePath: 'test.txt',
+      titleRoot: 'super-fun',
       maxPlaylistSize: 2,
       maxPlaylistTrackAddPerRequest: 10,
       overrideFileReader: readFileStub
     })
 
+    console.log(postStub.printf('STUB: %C: %*'))
     // Assert that the 2 tracks were added to the 1st playlist
     assert.calledWith(postStub, 
       'http://api.deezer.com/playlist/10000/tracks', {
